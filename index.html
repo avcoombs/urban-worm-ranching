@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urban Worm Ranching | Green Habits</title>
+
+<style>
+:root{
+  --organic-white:#F7F0E7;
+  --linen:#F1E3C3;
+  --straw:#ECCA7A;
+  --harvest:#DDB32A;
+  --sage:#72843E;
+  --tan:#E9D2B1;
+  --white:#FFFFFF;
+  --grey:#6C757D;
+  --charcoal:#212529;
+  --sage-dark:#56642F;
+  --success:#49672F;
+  --danger:#8B473D;
+  --shadow:0 8px 22px rgba(33,37,41,.12);
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:#d8d8d4;
+  color:var(--charcoal);
+  font-family:Roboto,Arial,Helvetica,sans-serif;
+}
+
+button,select{font:inherit}
+button{cursor:pointer}
+
+button:focus-visible,
+select:focus-visible{
+  outline:4px solid var(--harvest);
+  outline-offset:3px;
+}
+
+#app{
+  width:min(100vw,1600px);
+  min-height:100vh;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+
+.player{
+  width:100%;
+  aspect-ratio:16/9;
+  max-height:calc(100vh - 32px);
+  background:var(--organic-white);
+  box-shadow:0 18px 50px rgba(0,0,0,.22);
+  border-radius:22px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:230px 1fr;
+  grid-template-rows:64px 1fr 62px;
+}
+
+.player-header{
+  grid-column:1/-1;
+  background:var(--organic-white);
+  border-bottom:1px solid rgba(33,37,41,.12);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.brand-mark{
+  width:38px;
+  height:38px;
+  border-radius:50% 50% 45% 55%;
+  background:var(--sage);
+  position:relative;
+}
+
+.brand-mark::after{
+  content:"";
+  width:12px;
+  height:20px;
+  border-radius:100% 0 100% 0;
+  background:var(--straw);
+  position:absolute;
+  right:5px;
+  top:5px;
+  transform:rotate(18deg);
+}
+
+.brand-text strong{
+  display:block;
+  color:var(--sage-dark);
+  font-weight:600;
+}
+
+.brand-text span{
+  font-size:.78rem;
+  color:var(--grey);
+}
+
+.header-progress{min-width:220px}
+
+.header-progress-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:.72rem;
+  color:var(--grey);
+  margin-bottom:5px;
+}
+
+.progress-track{
+  height:8px;
+  background:#dedbd5;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0;
+  background:var(--sage);
+  transition:width .3s ease;
+}
+
+/* MENU */
+
+.sidebar{
+  grid-column:1;
+  grid-row:2;
+  background:#f0eadf;
+  border-right:1px solid rgba(33,37,41,.12);
+  overflow-y:auto;
+  padding:13px 10px 18px;
+}
+
+.menu-heading{
+  margin:5px 8px 12px;
+  color:var(--sage-dark);
+  font-size:.76rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:700;
+}
+
+.menu-section{
+  margin:12px 0 6px;
+  padding:0 8px;
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--grey);
+  font-weight:700;
+}
+
+.menu-item{
+  width:100%;
+  border:0;
+  background:transparent;
+  text-align:left;
+  padding:8px 9px;
+  margin:2px 0;
+  border-radius:9px;
+  display:grid;
+  grid-template-columns:32px 1fr 18px;
+  align-items:center;
+  gap:5px;
+  color:var(--charcoal);
+  font-size:.75rem;
+}
+
+.menu-item:hover:not(:disabled){
+  background:rgba(114,132,62,.12);
+}
+
+.menu-item.active{
+  background:var(--white);
+  box-shadow:0 2px 8px rgba(33,37,41,.08);
+  color:var(--sage-dark);
+  font-weight:600;
+}
+
+.menu-item.completed .menu-status{color:var(--sage)}
+
+.menu-item:disabled{
+  opacity:.43;
+  cursor:not-allowed;
+}
+
+/* STAGE */
+
+.stage{
+  grid-column:2;
+  grid-row:2;
+  background:var(--linen);
+  overflow:auto;
+  padding:24px;
+}
+
+.slide{
+  min-height:100%;
+  max-width:1050px;
+  margin:auto;
+  background:var(--organic-white);
+  border-radius:var(--radius);
+  padding:30px 34px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+
+.slide::before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:rgba(236,202,122,.30);
+  right:-80px;
+  top:-105px;
+}
+
+.slide.content{background:var(--linen)}
+
+.slide.interaction{
+  background:var(--organic-white);
+  border-top:9px solid var(--straw);
+}
+
+.slide.assessment{background:var(--tan)}
+
+.slide.completion{
+  background:var(--organic-white);
+  border:3px solid rgba(114,132,62,.35);
+}
+
+.eyebrow{
+  color:var(--sage-dark);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+h1{
+  position:relative;
+  margin:0;
+  max-width:82%;
+  color:var(--sage-dark);
+  font-size:clamp(1.7rem,3vw,2.7rem);
+  font-weight:300;
+  line-height:1.08;
+}
+
+.organic-rule{
+  width:92px;
+  height:5px;
+  border-radius:100% 0 100% 0;
+  background:var(--sage);
+  margin:14px 0 20px;
+  transform:skewX(-16deg);
+}
+
+.lead{
+  font-size:clamp(.95rem,1.35vw,1.15rem);
+  line-height:1.55;
+  max-width:850px;
+}
+
+.small{
+  font-size:.82rem;
+  color:var(--grey);
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+  margin-top:18px;
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-top:18px;
+}
+
+.card{
+  background:var(--white);
+  border:1px solid rgba(33,37,41,.11);
+  border-radius:15px;
+  padding:17px;
+  box-shadow:0 3px 8px rgba(33,37,41,.08);
+}
+
+.card h3{
+  margin:0 0 8px;
+  color:var(--sage-dark);
+}
+
+.card p{
+  margin:.3rem 0;
+  line-height:1.45;
+}
+
+.icon-circle{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--sage);
+  color:white;
+  font-weight:700;
+  margin-bottom:11px;
+}
+
+.callout{
+  margin-top:20px;
+  padding:14px 17px;
+  border-left:5px solid var(--sage);
+  border-radius:8px;
+  background:rgba(255,255,255,.65);
+  line-height:1.45;
+}
+
+.media-placeholder{
+  min-height:240px;
+  border:2px dashed rgba(114,132,62,.65);
+  border-radius:18px;
+  background:rgba(255,255,255,.58);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:24px;
+  margin:18px 0;
+}
+
+.media-icon{
+  font-size:2.2rem;
+  margin-bottom:9px;
+}
+
+
+/* INTEGRATED MEDIA */
+.media-frame{
+  margin:18px 0;
+  border-radius:16px;
+  overflow:hidden;
+  background:#111;
+  box-shadow:0 4px 12px rgba(33,37,41,.14);
+}
+.media-frame video{display:block;width:100%;height:auto;max-height:54vh;background:#111}
+.asset-image{display:block;width:100%;height:auto;border-radius:14px}
+.lillian-layout{display:grid;grid-template-columns:minmax(220px,.78fr) minmax(0,1.22fr);gap:22px;align-items:center;margin-top:10px}
+.lillian-frame{min-height:0;margin:0;padding:0;overflow:hidden;border-style:solid;background:var(--white)}
+.lillian-frame img{display:block;width:100%;height:390px;object-fit:cover;object-position:center 24%;}
+.character-inline{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;margin-top:18px}
+.character-inline img{width:150px;height:190px;object-fit:cover;object-position:center 24%;border-radius:14px;background:white}
+.asset-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.asset-link{display:inline-block;padding:8px 12px;border:1px solid rgba(86,100,47,.45);border-radius:8px;color:var(--sage-dark);background:white;text-decoration:none;font-size:.82rem;font-weight:600}
+.asset-link:hover{text-decoration:underline}
+.infographic-frame{background:white;padding:10px;border-radius:16px;margin-top:14px}
+.infographic-frame img{display:block;width:100%;max-height:56vh;object-fit:contain}
+.text-equivalent{margin-top:12px;background:white;border:1px solid rgba(33,37,41,.11);border-radius:12px;padding:0 14px}
+.text-equivalent summary{cursor:pointer;padding:12px 0;font-weight:700;color:var(--sage-dark)}
+.certificate-image{display:block;width:min(100%,760px);margin:16px auto;border-radius:10px;box-shadow:0 4px 12px rgba(33,37,41,.12)}
+@media(max-width:900px){.lillian-layout{grid-template-columns:1fr}.lillian-frame img{height:330px}.character-inline{grid-template-columns:120px 1fr}.character-inline img{width:120px;height:160px}}
+
+/* CHOICES */
+
+.choices{
+  display:grid;
+  gap:10px;
+  margin-top:17px;
+}
+
+.choice{
+  border:2px solid rgba(114,132,62,.3);
+  border-radius:13px;
+  background:var(--white);
+  padding:13px 15px;
+  text-align:left;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  color:var(--charcoal);
+}
+
+.choice:hover{
+  border-color:var(--sage);
+}
+
+.choice.selected{
+  border-color:var(--harvest);
+  background:#fff8dc;
+}
+
+.choice-letter{
+  flex:0 0 28px;
+  height:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--sage);
+  color:white;
+  font-weight:700;
+}
+
+.action-row{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+  flex-wrap:wrap;
+}
+
+.primary-btn{
+  border:0;
+  border-radius:10px;
+  padding:11px 18px;
+  font-weight:600;
+  background:var(--harvest);
+  color:var(--charcoal);
+}
+
+.primary-btn:hover{
+  filter:brightness(.96);
+}
+
+.primary-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.feedback{
+  margin-top:16px;
+  border-radius:13px;
+  padding:14px 16px;
+  display:none;
+  line-height:1.5;
+}
+
+.feedback.show{display:block}
+
+.feedback.good{
+  background:#e8efdf;
+  border-left:5px solid var(--success);
+}
+
+.feedback.try{
+  background:#fff5d6;
+  border-left:5px solid var(--harvest);
+}
+
+.feedback.bad{
+  background:#f5e4df;
+  border-left:5px solid var(--danger);
+}
+
+/* TROUBLESHOOTING MATCH */
+
+.symptom-row{
+  display:grid;
+  grid-template-columns:1.35fr 1fr;
+  gap:12px;
+  margin:11px 0;
+  align-items:center;
+}
+
+.symptom-row select{
+  width:100%;
+  padding:10px;
+  border:1px solid #aaa;
+  border-radius:8px;
+  background:white;
+}
+
+/* SEQUENCE */
+
+.sequence-list{
+  display:grid;
+  gap:9px;
+  margin-top:15px;
+}
+
+.sequence-item{
+  background:white;
+  border-radius:10px;
+  padding:11px 12px;
+  display:grid;
+  grid-template-columns:60px 1fr;
+  gap:10px;
+  align-items:center;
+}
+
+.sequence-item select{
+  padding:7px;
+  border-radius:7px;
+  border:1px solid #aaa;
+}
+
+/* PLAYER BAR */
+
+.player-bar{
+  grid-column:1/-1;
+  grid-row:3;
+  background:var(--charcoal);
+  color:white;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 18px;
+  gap:14px;
+}
+
+.player-controls{
+  display:flex;
+  gap:8px;
+}
+
+.player-controls.right{
+  justify-content:flex-end;
+}
+
+.player-btn{
+  border:1px solid rgba(255,255,255,.32);
+  background:transparent;
+  color:white;
+  border-radius:8px;
+  padding:8px 15px;
+}
+
+.player-btn.continue{
+  background:var(--harvest);
+  border-color:var(--harvest);
+  color:var(--charcoal);
+  font-weight:700;
+}
+
+.player-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.screen-count{
+  text-align:center;
+  font-size:.78rem;
+  color:#ddd;
+}
+
+.certificate{
+  max-width:620px;
+  margin:18px auto;
+  border:8px double var(--sage);
+  background:white;
+  padding:28px;
+  text-align:center;
+}
+
+.certificate h2{
+  color:var(--sage-dark);
+  font-weight:300;
+  font-size:2rem;
+  margin:.3rem;
+}
+
+@media(max-width:900px){
+  #app{padding:0}
+
+  .player{
+    min-height:100vh;
+    aspect-ratio:auto;
+    border-radius:0;
+    grid-template-columns:170px 1fr;
+  }
+
+  .stage{padding:12px}
+  .slide{padding:22px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+
+@media(max-width:650px){
+  .player{
+    grid-template-columns:1fr;
+    grid-template-rows:60px auto 1fr 60px;
+  }
+
+  .player-header{grid-row:1}
+
+  .sidebar{
+    grid-column:1;
+    grid-row:2;
+    display:flex;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:6px;
+    border-right:0;
+    border-bottom:1px solid rgba(33,37,41,.12);
+  }
+
+  .menu-heading,.menu-section{display:none}
+
+  .menu-item{
+    min-width:145px;
+    grid-template-columns:30px 1fr 15px;
+  }
+
+  .stage{
+    grid-column:1;
+    grid-row:3;
+  }
+
+  .player-bar{grid-row:4}
+  .header-progress{min-width:120px}
+  .brand-text span{display:none}
+
+  .symptom-row{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<main class="player" aria-label="Urban Worm Ranching eLearning module">
+
+<header class="player-header">
+
+<div class="brand">
+<div class="brand-mark" aria-hidden="true"></div>
+
+<div class="brand-text">
+<strong>Green Habits</strong>
+<span>Urban Worm Ranching</span>
+</div>
+</div>
+
+<div class="header-progress">
+
+<div class="header-progress-label">
+<span>Progress</span>
+<span id="progressText">0%</span>
+</div>
+
+<div class="progress-track" aria-hidden="true">
+<div id="progressFill" class="progress-fill"></div>
+</div>
+
+</div>
+
+</header>
+
+<nav id="menu" class="sidebar" aria-label="Module menu"></nav>
+
+<section id="stage" class="stage" aria-live="polite"></section>
+
+<footer class="player-bar">
+
+<div class="player-controls">
+<button id="backBtn" class="player-btn" aria-label="Go to previous screen">
+← Back
+</button>
+</div>
+
+<div id="screenCount" class="screen-count"></div>
+
+<div class="player-controls right">
+<button id="continueBtn" class="player-btn continue" aria-label="Continue to next screen">
+Continue →
+</button>
+</div>
+
+</footer>
+
+</main>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   VERSION 3.0
+   ========================================================= */
+
+const state = {
+  current:0,
+  visited:new Set([0]),
+
+  b1Choice:"",
+  b2Choice:"",
+  b3Choice:"",
+
+  kc1Complete:false,
+  kc2Complete:false,
+  kc3Complete:false,
+
+  quizSelections:{},
+  quizSubmitted:{},
+
+  sequenceSubmitted:false,
+
+  assessment:{}
+};
+
+/* =========================================================
+   CENTRAL QUIZ DATA
+   ========================================================= */
+
+const quizData = {
+
+  kc1:{
+    correct:"B",
+    good:"Yes. Adequate ventilation helps support healthy bin conditions while the container still needs to fit the available space.",
+    bad:"Look beyond appearance or maximum size. A practical indoor setup needs adequate ventilation along with manageable moisture and fit."
+  },
+
+  kc2:{
+    correct:"B",
+    good:"Correct. Feeding modestly and observing consumption lets you respond to what the system is actually processing.",
+    bad:"A worm bin benefits from observation rather than extremes. Add modest amounts, watch what is processed, and adjust."
+  },
+
+  a1:{
+    correct:"B",
+    good:"A ventilated compact bin balances the physical setting with the needs of the living system.",
+    bad:"Consider both the apartment constraint and the bin's need for healthy airflow and manageable conditions."
+  },
+
+  a2:{
+    correct:"B",
+    good:"Correct. Modest feeding plus observation lets you adjust to the rate the system is actually processing food.",
+    bad:"The strongest routine is neither constant feeding nor permanent withholding. Feed modestly, observe, and adjust."
+  },
+
+  a4:{
+    correct:"B",
+    good:"Yes. This response addresses the observable wet, overfed condition without making an unnecessarily large change.",
+    bad:"Start with the evidence you have: wet bedding, uneaten food, and odor. Reduce input, restore balance, then observe."
+  }
+
+};
+
+/* =========================================================
+   SLIDES
+   ========================================================= */
+
+const slides = [
+
+{
+id:"1.1",
+section:"Orientation",
+type:"content",
+title:"Welcome to Urban Worm Ranching",
+html:`
+<div class="eyebrow">Orientation • 1.1</div>
+<h1>Welcome to Urban Worm Ranching</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">Could a worm bin work where you live?</p>
+
+<div class="grid-3">
+
+<div class="card">
+<div class="icon-circle">1</div>
+<h3>Small Spaces</h3>
+<p>Explore a compact approach designed with urban living in mind.</p>
+</div>
+
+<div class="card">
+<div class="icon-circle">2</div>
+<h3>Food Scraps</h3>
+<p>See how suitable scraps can become part of a useful living system.</p>
+</div>
+
+<div class="card">
+<div class="icon-circle">3</div>
+<h3>Practical Choices</h3>
+<p>Practice setup, feeding, and troubleshooting decisions.</p>
+</div>
+
+</div>
+
+<div class="callout">
+By the end, you should be able to decide whether vermiculture is a practical
+and sustainable option for your living environment.
+</div>
+`
+},
+
+{
+id:"1.2",
+section:"Orientation",
+type:"content",
+title:"Meet Your SME",
+html:`
+<div class="eyebrow">Orientation • 1.2</div>
+<h1>Meet Your SME</h1>
+<div class="organic-rule"></div>
+<p class="lead">A quick welcome before you begin.</p>
+<div class="media-frame">
+<video controls preload="metadata" aria-label="SME introduction to Urban Worm Ranching">
+  <source src="assets/SME intro Worms.mp4" type="video/mp4">
+  <track kind="captions" src="assets/SME-intro-captions.vtt" srclang="en" label="English" default>
+  Your browser does not support HTML5 video.
+</video>
+</div>
+<div class="asset-links">
+<a class="asset-link" href="assets/SME-intro-transcript.txt" target="_blank">Open transcript</a>
+</div>
+<div class="callout"><strong>Listen for one idea you want to test in your own space.</strong></div>
+`
+},
+
+{
+id:"1.3",
+section:"Scenario Setup",
+type:"content",
+title:"Meet Lillian",
+html:`
+<div class="eyebrow">Scenario Setup • 1.3</div>
+<h1>Meet Lillian</h1>
+<div class="organic-rule"></div>
+<div class="lillian-layout">
+  <div class="media-placeholder lillian-frame">
+    <img src="assets/Lillian 2.0_skeptical.jpg" alt="Lillian looks skeptical as she considers whether worm ranching will work in her apartment.">
+  </div>
+  <div>
+    <p class="lead">Lillian is interested in living more sustainably, but she's not convinced that keeping worms in her apartment will fit her lifestyle.</p>
+    <div class="card">
+      <h3>Her Situation</h3>
+      <p>Lillian loves cooking home-cooked meals with fresh ingredients, which means she regularly ends up with vegetable trimmings and other food scraps.</p>
+      <p>She values a clean, healthy lifestyle and enjoys thrifting, so reusing what she already has and wasting less appeals to her.</p>
+      <p>But she lives in a small apartment and has practical concerns: <strong>Where will the bin go? Will it smell? And how much work will it require?</strong></p>
+    </div>
+    <div class="callout"><strong>Your role:</strong> Help Lillian decide whether worm ranching can realistically work in her life by guiding her through setup, feeding, and troubleshooting decisions.</div>
+  </div>
+</div>
+`
+},
+
+{
+id:"1.4",
+section:"Preparation",
+type:"interaction",
+title:"Quick Check",
+html:`
+<div class="eyebrow">Preparation • 1.4</div>
+<h1>Quick Check: What Do You Already Know?</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">
+These questions are not graded. Use them as a starting point.
+</p>
+
+<div class="grid-3">
+
+<div class="card">
+<h3>Food</h3>
+<p>Do all food scraps belong in a worm bin?</p>
+</div>
+
+<div class="card">
+<h3>Space</h3>
+<p>What makes a small indoor bin practical?</p>
+</div>
+
+<div class="card">
+<h3>Odor</h3>
+<p>What conditions might contribute to an unpleasant smell?</p>
+</div>
+
+</div>
+
+<div class="callout">
+If something feels unfamiliar, that's exactly what the rest of the module
+is designed to help you explore and practice.
+</div>
+`
+},
+
+{
+id:"1.5",
+section:"Context",
+type:"content",
+title:"Why Worm Ranching in the City?",
+html:`
+<div class="eyebrow">Context • 1.5</div>
+<h1>Why Worm Ranching in the City?</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">
+One small system can connect to several practical goals.
+</p>
+
+<div class="grid-3">
+
+<div class="card">
+<div class="icon-circle">↘</div>
+<h3>Less Waste</h3>
+<p>Divert suitable food scraps from the household waste stream.</p>
+</div>
+
+<div class="card">
+<div class="icon-circle">↟</div>
+<h3>Healthier Soil</h3>
+<p>Transform organic material into useful vermicompost.</p>
+</div>
+
+<div class="card">
+<div class="icon-circle">⌂</div>
+<h3>Small-Space Option</h3>
+<p>A well-managed system can fit limited urban living spaces.</p>
+</div>
+
+</div>
+
+<div class="callout">
+The goal isn't to compost everything. It's to understand and manage a
+small living system well enough that it remains useful and manageable.
+</div>
+`
+},
+
+{
+id:"1.6",
+section:"Preparation",
+type:"content",
+title:"Build the Basics",
+html:`
+<div class="eyebrow">Preparation • 1.6</div>
+<h1>Build the Basics</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">What does a simple worm bin need?</p>
+
+<div class="grid-3">
+
+<div class="card">
+<h3>Container + Airflow</h3>
+<p>Choose a manageable container that supports ventilation.</p>
+</div>
+
+<div class="card">
+<h3>Bedding + Worms</h3>
+<p>Provide moist bedding and an appropriate worm population.</p>
+</div>
+
+<div class="card">
+<h3>Food + Observation</h3>
+<p>Add suitable food modestly, then watch how the system responds.</p>
+</div>
+
+</div>
+
+<div class="callout">
+A healthy worm bin is less about special equipment than balancing a few
+connected needs.
+</div>
+`
+},
+
+{
+id:"1.7",
+section:"Preparation",
+type:"content",
+title:"Why Build a Worm Bin? — Visual Guide",
+html:`
+<div class="eyebrow">Preparation • 1.7</div>
+<h1>Why Build a Worm Bin? — Visual Guide</h1>
+<div class="organic-rule"></div>
+<p class="lead">See how one small worm bin connects food-waste diversion, soil health, and community growing.</p>
+<div class="infographic-frame">
+<img src="assets/Worm Ranching Infographic 3.0.jpg" alt="Infographic showing how a worm bin connects food-waste diversion, red wigglers, nutrient-rich castings, healthy soil, and community growing.">
+</div>
+<details class="text-equivalent">
+<summary>Text version of infographic</summary>
+<p><strong>Why save food scraps?</strong> Food scraps buried in landfills break down under low-oxygen conditions and produce greenhouse gases. Worm bins divert suitable scraps from the waste stream and transform them into a useful soil amendment.</p>
+<p><strong>Meet the red wiggler.</strong> Red wigglers are well suited to worm bins and thrive in dark, compact environments. They consume suitable food scraps and organic bedding. Their digestion produces nutrient-rich castings.</p>
+<p><strong>From scraps to soil.</strong> Worm castings provide nutrients that support plant growth and add organic matter that supports healthy soil structure. Finished castings can be harvested while leaving the worms and unfinished material in the bin.</p>
+<p><strong>From home to community.</strong> Worm bins can support household plants and community gardens while diverting food waste. Castings can be shared with school or community growing projects, and shared composting and gardening can connect people around local sustainability.</p>
+</details>
+`
+},
+
+{
+id:"1.8",
+section:"Preparation",
+type:"content",
+title:"Demonstration — Build & Start the Bin",
+html:`
+<div class="eyebrow">Preparation • 1.8</div>
+<h1>Demonstration — Build & Start the Bin</h1>
+<div class="organic-rule"></div>
+<p class="lead">Watch the system come together, and pay attention to both <em>what</em> is added and <em>why</em>.</p>
+<div class="media-frame">
+<video controls preload="metadata" aria-label="Demonstration of setting up and maintaining a two-bin worm ranching system">
+  <source src="assets/Setting up your worm bin.mp4" type="video/mp4">
+  <track kind="captions" src="assets/worm-bin-demo-captions.vtt" srclang="en" label="English" default>
+  Your browser does not support HTML5 video.
+</video>
+</div>
+<div class="asset-links">
+<a class="asset-link" href="assets/worm-bin-demo-transcript.txt" target="_blank">Open transcript</a>
+</div>
+<div class="callout"><strong>Key sequence:</strong> prepare the container → add bedding → establish moisture → introduce worms → feed modestly → observe and adjust.</div>
+`
+},
+
+{
+id:"B1.1",
+section:"Branch 1",
+type:"interaction",
+title:"Choose the Bin",
+render:function(){
+return decisionHTML(
+"Branch 1 • Decision",
+"Choose the Bin",
+"Lillian has room for one compact bin. Which setup best balances her limited space with the worms' need for airflow and manageable conditions?",
+"b1Choice",
+[
+["A","Sealed decorative container"],
+["B","Ventilated compact bin"],
+["C","Large outdoor-style tote"]
+]
+);
+}
+},
+
+{
+id:"B1.2",
+section:"Branch 1",
+type:"interaction",
+title:"Consequence & Feedback",
+render:function(){
+
+let choice=state.b1Choice;
+
+let feedback={
+A:"A sealed container may look tidy, but inadequate airflow can make healthy conditions harder to maintain.",
+B:"A ventilated compact bin best balances Lillian's limited space with airflow and manageable conditions.",
+C:"A large tote can work in some settings, but it adds unnecessary size and complexity for Lillian's apartment."
+};
+
+return `
+<div class="eyebrow">Branch 1 • Consequence</div>
+<h1>See What Your Bin Choice Means</h1>
+<div class="organic-rule"></div>
+
+<div class="feedback show ${choice==="B" ? "good" : "try"}">
+<strong>Your choice: ${choice}</strong><br>
+${feedback[choice]}
+</div>
+
+<div class="callout">
+<strong>Principle:</strong>
+A practical indoor bin should fit the available space while supporting
+airflow and manageable moisture.
+</div>
+`;
+}
+},
+
+{
+id:"B1.3",
+section:"Branch 1",
+type:"interaction",
+title:"Knowledge Check",
+render:function(){
+return quizHTML(
+"kc1",
+"Branch 1 • Knowledge Check",
+"Which Feature Matters Most?",
+"Which feature is most important to protect when choosing a practical small indoor worm bin?",
+[
+["A","Airtight lid"],
+["B","Adequate ventilation"],
+["C","Maximum possible volume"]
+]
+);
+}
+},
+
+/* =========================================================
+   BRANCH 2
+   ========================================================= */
+
+{
+id:"B2.1",
+section:"Branch 2",
+type:"interaction",
+title:"Feed Wisely",
+render:function(){
+return decisionHTML(
+"Branch 2 • Decision",
+"Feed Wisely",
+"Lillian has a large bowl of kitchen scraps. What advice best supports a stable bin?",
+"b2Choice",
+[
+["A","Add all the scraps now"],
+["B","Add a modest amount and observe"],
+["C","Stop feeding altogether"]
+]
+);
+}
+},
+
+{
+id:"B2.2",
+section:"Branch 2",
+type:"interaction",
+title:"Consequence & Feedback",
+render:function(){
+
+let choice=state.b2Choice;
+
+let feedback={
+A:"Adding a large quantity can leave uneaten food behind and contribute to unpleasant or imbalanced conditions.",
+B:"A modest amount gives Lillian time to observe what the worms process before adding more.",
+C:"Stopping permanently avoids excess, but it does not sustain the system. The goal is gradual feeding and observation."
+};
+
+return `
+<div class="eyebrow">Branch 2 • Consequence</div>
+<h1>Feeding Is a Rate, Not a Dumping Event</h1>
+<div class="organic-rule"></div>
+
+<div class="feedback show ${choice==="B" ? "good" : "try"}">
+<strong>Your choice: ${choice}</strong><br>
+${feedback[choice]}
+</div>
+
+<div class="callout">
+<strong>Principle:</strong>
+Feed gradually, observe what the system processes, and adjust.
+</div>
+`;
+}
+},
+
+{
+id:"B2.3",
+section:"Branch 2",
+type:"interaction",
+title:"Knowledge Check",
+render:function(){
+return quizHTML(
+"kc2",
+"Branch 2 • Knowledge Check",
+"What Is the Best Feeding Habit?",
+"Which feeding approach gives a beginner the best chance to notice changes early and avoid unnecessary problems?",
+[
+["A","Add more whenever scraps are available"],
+["B","Feed modestly and observe consumption"],
+["C","Keep the bin unfed for long periods"]
+]
+);
+}
+},
+
+/* =========================================================
+   BRANCH 3
+   ========================================================= */
+
+{
+id:"B3.1",
+section:"Branch 3",
+type:"interaction",
+title:"Troubleshoot the Bin",
+render:function(){
+return decisionHTML(
+"Branch 3 • Decision",
+"Troubleshoot the Bin",
+"<div class=\"character-inline\"><img src=\"assets/Lillian_concerned.jpg\" alt=\"Lillian looks concerned as she considers a problem with her worm bin.\"><span>The bedding looks soggy, yesterday's scraps are still there, and the bin smells sour. What should Lillian do first?</span></div>",
+"b3Choice",
+[
+["A","Add more food"],
+["B","Pause feeding and add dry bedding"],
+["C","Add more water"]
+]
+);
+}
+},
+
+{
+id:"B3.2",
+section:"Branch 3",
+type:"interaction",
+title:"Consequence & Feedback",
+render:function(){
+
+let choice=state.b3Choice;
+
+let feedback={
+A:"More food adds input when uneaten scraps are already present. It does not address the conditions you observed.",
+B:"Pausing feeding and adding dry bedding responds directly to excess moisture and uneaten food, then allows time to observe.",
+C:"Adding more water intensifies an already wet condition rather than correcting it."
+};
+
+return `
+<div class="eyebrow">Branch 3 • Consequence</div>
+<h1>Respond to the Symptoms, Then Observe</h1>
+<div class="organic-rule"></div>
+
+<div class="feedback show ${choice==="B" ? "good" : "try"}">
+<strong>Your choice: ${choice}</strong><br>
+${feedback[choice]}
+</div>
+
+<div class="callout">
+<strong>Principle:</strong>
+Troubleshooting works best when the response is proportionate to
+observable evidence and followed by more observation.
+</div>
+`;
+}
+},
+
+{
+id:"B3.3",
+section:"Branch 3",
+type:"interaction",
+title:"Knowledge Check",
+render:function(){
+
+return `
+<div class="eyebrow">Branch 3 • Knowledge Check</div>
+<h1>Diagnose the Bin</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">
+Choose the most reasonable <strong>first response</strong> for each set
+of observations.
+</p>
+
+${symptomRow(
+"s1",
+"Bedding feels soggy, scraps remain uneaten, and odor is increasing."
+)}
+
+${symptomRow(
+"s2",
+"Bedding feels dry and crumbly rather than evenly damp."
+)}
+
+${symptomRow(
+"s3",
+"Food is disappearing steadily, bedding remains moist, and there is no unusual odor."
+)}
+
+<div class="action-row">
+<button class="primary-btn" onclick="checkSymptoms()">
+Submit Responses
+</button>
+</div>
+
+<div id="symptomFeedback" class="feedback" role="status"></div>
+
+`;
+}
+},
+
+/* =========================================================
+   DEBRIEF
+   ========================================================= */
+
+{
+id:"1.9",
+section:"Debrief",
+type:"content",
+title:"What Lillian Learned",
+html:`
+<div class="eyebrow">Reconvergence • 1.9</div>
+<h1>Three Decisions. One Manageable System.</h1>
+<div class="organic-rule"></div>
+
+<div class="grid-3">
+
+<div class="card">
+<h3>Fit the Setting</h3>
+<p>Choose a setup that works in the available space.</p>
+</div>
+
+<div class="card">
+<h3>Observe Before Adding</h3>
+<p>Feed gradually and respond to what the bin processes.</p>
+</div>
+
+<div class="card">
+<h3>Troubleshoot from Evidence</h3>
+<p>Match the first adjustment to the symptoms you can observe.</p>
+</div>
+
+</div>
+
+<div class="character-inline"><img src="assets/Lillian_relieved.jpg" alt="Lillian looks relieved after identifying a manageable solution to her worm bin problem."><div><strong>Lillian has a workable plan.</strong><p>She now knows that a small system can be managed through observation and gradual adjustment.</p></div></div>
+
+<div class="callout">
+<strong>Reflection:</strong>
+Which principle would matter most in your own living situation?
+</div>
+`
+},
+
+/* =========================================================
+   ASSESSMENT
+   ========================================================= */
+
+{
+id:"A.0",
+section:"Final Check",
+type:"assessment",
+title:"Final Check — Directions",
+html:`
+<div class="eyebrow">Summative Assessment</div>
+<h1>Show What You Would Do in a Real Setup</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">
+You'll answer four questions about setup, feeding, sequence,
+and troubleshooting.
+</p>
+
+<div class="grid-2">
+
+<div class="card">
+<h3>4 Items</h3>
+<p>A short final check.</p>
+</div>
+
+<div class="card">
+<h3>Meaningful Feedback</h3>
+<p>Review the reasoning after each response.</p>
+</div>
+
+</div>
+
+<div class="callout">
+No passing threshold is used in this prototype because the source
+requirements do not specify one.
+</div>
+`
+},
+
+{
+id:"A.1",
+section:"Final Check",
+type:"assessment",
+title:"Choose the Apartment Bin",
+render:function(){
+return quizHTML(
+"a1",
+"Final Check • 1 of 4",
+"Choose the Apartment Bin",
+"Which option best fits a small apartment while supporting healthy bin conditions?",
+[
+["A","A sealed decorative container with no ventilation"],
+["B","A ventilated compact bin sized for the available space"],
+["C","The largest outdoor tote that will fit through the door"]
+]
+);
+}
+},
+
+{
+id:"A.2",
+section:"Final Check",
+type:"assessment",
+title:"Feed the Bin",
+render:function(){
+return quizHTML(
+"a2",
+"Final Check • 2 of 4",
+"Feed the Bin",
+"Which feeding routine best supports a beginner worm bin?",
+[
+["A","Add every available scrap immediately"],
+["B","Add modest amounts and observe consumption"],
+["C","Feed once, then avoid adding food indefinitely"]
+]
+);
+}
+},
+
+{
+id:"A.3",
+section:"Final Check",
+type:"assessment",
+title:"Order the Setup",
+render:function(){
+
+return `
+<div class="eyebrow">Final Check • 3 of 4</div>
+<h1>Order the Setup</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">
+The actions below are intentionally out of order. Assign each one a
+position from <strong>1</strong> through <strong>5</strong>.
+</p>
+
+<div class="sequence-list">
+
+${sequenceItem(
+"seqWorms",
+"Introduce the worms"
+)}
+
+${sequenceItem(
+"seqObserve",
+"Observe the system before making further changes"
+)}
+
+${sequenceItem(
+"seqContainer",
+"Prepare a container with appropriate airflow"
+)}
+
+${sequenceItem(
+"seqFood",
+"Begin with a modest amount of suitable food"
+)}
+
+${sequenceItem(
+"seqBedding",
+"Add bedding and establish appropriate moisture"
+)}
+
+</div>
+
+<div class="action-row">
+<button class="primary-btn" onclick="checkSequence()">
+Submit Sequence
+</button>
+</div>
+
+<div id="sequenceFeedback" class="feedback" role="status"></div>
+`;
+}
+},
+
+{
+id:"A.4",
+section:"Final Check",
+type:"assessment",
+title:"Troubleshoot the Smell",
+render:function(){
+return quizHTML(
+"a4",
+"Final Check • 4 of 4",
+"Troubleshoot the Smell",
+"Wet bedding + uneaten scraps + sour odor: what is the best first response?",
+[
+["A","Add more food so the worms become more active"],
+["B","Pause feeding, add dry bedding, and observe before further change"],
+["C","Add more water and close the container tightly"]
+]
+);
+}
+},
+
+/* =========================================================
+   COMPLETION
+   ========================================================= */
+
+{
+id:"1.10",
+section:"Completion",
+type:"completion",
+title:"Results & Next Steps",
+html:`
+<div class="eyebrow">Completion • 1.10</div>
+<h1>You've Completed Urban Worm Ranching</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">
+You now have a practical framework for deciding whether a worm bin fits
+your space and for managing the basic choices that keep it healthy.
+</p>
+
+<div class="grid-3">
+
+<div class="card">
+<h3>Start Small</h3>
+<p>Choose a setup appropriate to your actual space.</p>
+</div>
+
+<div class="card">
+<h3>Observe</h3>
+<p>Watch what the living system is doing before adding more.</p>
+</div>
+
+<div class="card">
+<h3>Adjust Gradually</h3>
+<p>Use evidence rather than panic when conditions change.</p>
+</div>
+
+</div>
+
+<div class="certificate" aria-label="Course completion information">
+<div class="small">GREEN HABITS</div>
+<h2>Certificate of Completion</h2>
+<p>Urban Worm Ranching</p>
+<p>This certificate recognizes successful completion of the Urban Worm Ranching learning experience.</p>
+</div>
+<img class="certificate-image" src="assets/Worm Ranching Certificate of Completion.jpg" alt="Certificate of Completion for the Urban Worm Ranching course, issued by Fremen Learning Systems and Green Habits.">
+
+<div class="callout">
+Choosing not to start a worm bin yet can also be an informed decision.
+</div>
+`
+}
+
+];
+
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
+
+function getSlideHTML(slide){
+
+if(typeof slide.render==="function"){
+return slide.render();
+}
+
+return slide.html;
+
+}
+
+function slideClass(type){
+
+if(type==="interaction"){
+return "slide interaction";
+}
+
+if(type==="assessment"){
+return "slide assessment";
+}
+
+if(type==="completion"){
+return "slide completion";
+}
+
+return "slide content";
+
+}
+
+/* =========================================================
+   DECISION INTERACTIONS
+   ========================================================= */
+
+function decisionHTML(eyebrow,title,prompt,stateKey,choices){
+
+let selected=state[stateKey];
+
+let html=choices.map(function(item){
+
+let letter=item[0];
+let text=item[1];
+
+return `
+<button
+class="choice ${selected===letter ? "selected" : ""}"
+data-letter="${letter}"
+onclick="selectDecision('${stateKey}','${letter}',this)"
+aria-pressed="${selected===letter ? "true" : "false"}">
+
+<span class="choice-letter">${letter}</span>
+<span>${text}</span>
+
+</button>
+`;
+
+}).join("");
+
+return `
+<div class="eyebrow">${eyebrow}</div>
+<h1>${title}</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">${prompt}</p>
+
+<div class="choices">
+${html}
+</div>
+
+<div class="callout">
+Choose the response that best fits the conditions you can observe.
+Your choice will shape the feedback on the next screen.
+</div>
+`;
+
+}
+
+function selectDecision(stateKey,letter,button){
+
+state[stateKey]=letter;
+
+let group=button.parentElement;
+
+let choices=group.querySelectorAll(".choice");
+
+choices.forEach(function(choice){
+
+let selected=choice.dataset.letter===letter;
+
+choice.classList.toggle("selected",selected);
+
+choice.setAttribute(
+"aria-pressed",
+selected ? "true" : "false"
+);
+
+});
+
+refreshNavigation();
+
+}
+
+/* =========================================================
+   QUIZ INTERACTIONS
+   ========================================================= */
+
+function quizHTML(key,eyebrow,title,prompt,choices){
+
+let selected=state.quizSelections[key] || "";
+
+let submitted=state.quizSubmitted[key] || false;
+
+let data=quizData[key];
+
+let choicesHTML=choices.map(function(item){
+
+let letter=item[0];
+let text=item[1];
+
+return `
+<button
+class="choice ${selected===letter ? "selected" : ""}"
+data-letter="${letter}"
+onclick="selectQuiz('${key}','${letter}',this)"
+aria-pressed="${selected===letter ? "true" : "false"}">
+
+<span class="choice-letter">${letter}</span>
+<span>${text}</span>
+
+</button>
+`;
+
+}).join("");
+
+let feedbackHTML=
+'<div id="feedback-'+key+'" class="feedback" role="status"></div>';
+
+if(submitted){
+
+let correct=selected===data.correct;
+
+feedbackHTML=`
+<div
+id="feedback-${key}"
+class="feedback show ${correct ? "good" : "try"}"
+role="status">
+
+${correct ? data.good : data.bad}
+
+</div>
+`;
+
+}
+
+return `
+<div class="eyebrow">${eyebrow}</div>
+<h1>${title}</h1>
+<div class="organic-rule"></div>
+
+<p class="lead">${prompt}</p>
+
+<div class="choices">
+${choicesHTML}
+</div>
+
+<div class="action-row">
+
+<button
+class="primary-btn"
+id="submit-${key}"
+onclick="submitQuiz('${key}')">
+
+${submitted ? "Response Submitted" : "Submit"}
+
+</button>
+
+</div>
+
+${feedbackHTML}
+`;
+
+}
+
+function selectQuiz(key,letter,button){
+
+/*
+Once submitted, keep the reviewed response stable.
+*/
+
+if(state.quizSubmitted[key]){
+return;
+}
+
+state.quizSelections[key]=letter;
+
+let choices=
+button.parentElement.querySelectorAll(".choice");
+
+choices.forEach(function(choice){
+
+let selected=
+choice.dataset.letter===letter;
+
+choice.classList.toggle(
+"selected",
+selected
+);
+
+choice.setAttribute(
+"aria-pressed",
+selected ? "true" : "false"
+);
+
+});
+
+}
+
+
+
+function submitQuiz(key){
+
+let selected=state.quizSelections[key];
+
+let feedback=
+document.getElementById("feedback-"+key);
+
+if(!selected){
+
+feedback.className="feedback show try";
+
+feedback.textContent=
+"Choose an answer before submitting.";
+
+return;
+
+}
+
+let data=quizData[key];
+
+let correct=
+selected===data.correct;
+
+state.quizSubmitted[key]=true;
+
+/* Formative completion */
+
+if(key==="kc1"){
+state.kc1Complete=true;
+}
+
+if(key==="kc2"){
+state.kc2Complete=true;
+}
+
+/* Summative response recording */
+
+if(
+key==="a1" ||
+key==="a2" ||
+key==="a4"
+){
+
+state.assessment[key]=correct;
+
+}
+
+/* Show feedback */
+
+feedback.className=
+"feedback show "+
+(correct ? "good" : "try");
+
+feedback.innerHTML=
+(correct ? data.good : data.bad);
+
+/*
+For formative multiple-choice checks only,
+offer an optional retry after an incorrect response.
+*/
+
+if(
+(key==="kc1" || key==="kc2") &&
+!correct
+){
+
+feedback.innerHTML +=
+'<div class="action-row">'+
+'<button class="primary-btn" onclick="retryQuiz(\''+key+'\')">'+
+'Try Again'+
+'</button>'+
+'</div>';
+
+}
+
+/*
+Freeze the submitted response until the learner
+either retries or continues.
+*/
+
+let submitButton=
+document.getElementById("submit-"+key);
+
+if(submitButton){
+
+submitButton.textContent=
+"Response Submitted";
+
+submitButton.disabled=true;
+
+}
+
+let choiceButtons=
+feedback.parentElement.querySelectorAll(".choice");
+
+choiceButtons.forEach(function(button){
+button.disabled=true;
+});
+
+/*
+Submission completes the formative check even when
+the response is incorrect, so Continue remains an option.
+*/
+
+refreshNavigation();
+
+}
+function retryQuiz(key){
+
+/*
+Clear only this attempt.
+The learner remains on the same formative screen.
+*/
+
+state.quizSelections[key]="";
+state.quizSubmitted[key]=false;
+
+/*
+The knowledge check remains incomplete while the learner
+is actively retrying it.
+*/
+
+if(key==="kc1"){
+state.kc1Complete=false;
+}
+
+if(key==="kc2"){
+state.kc2Complete=false;
+}
+
+/*
+Re-render the screen in its unanswered state.
+*/
+
+render();
+
+}
+/* =========================================================
+   TROUBLESHOOTING KNOWLEDGE CHECK
+   ========================================================= */
+
+function symptomRow(id,condition){
+
+return `
+<div class="symptom-row">
+
+<div class="card">
+${condition}
+</div>
+
+<label>
+
+<span class="small">
+Best first response
+</span>
+
+<select id="${id}">
+
+<option value="">
+Choose…
+</option>
+
+<option value="steady">
+Continue the current routine and observe
+</option>
+
+<option value="dry">
+Pause feeding and add dry bedding
+</option>
+
+<option value="water">
+Add a small amount of moisture and reassess
+</option>
+
+</select>
+
+</label>
+
+</div>
+`;
+
+}
+
+function checkSymptoms(){
+
+let s1=
+document.getElementById("s1").value;
+
+let s2=
+document.getElementById("s2").value;
+
+let s3=
+document.getElementById("s3").value;
+
+let feedback=
+document.getElementById("symptomFeedback");
+
+if(!s1 || !s2 || !s3){
+
+feedback.className=
+"feedback show try";
+
+feedback.textContent=
+"Choose a response for all three conditions before submitting.";
+
+return;
+
+}
+
+let correct=
+s1==="dry" &&
+s2==="water" &&
+s3==="steady";
+
+feedback.className=
+"feedback show "+
+(correct ? "good" : "try");
+
+if(correct){
+
+feedback.textContent=
+"Good reasoning. You matched each response to the evidence: reduce input and excess moisture when conditions are soggy, restore moisture cautiously when bedding is too dry, and avoid unnecessary changes when the system is functioning steadily.";
+
+}else{
+
+feedback.textContent=
+"Review the observations rather than looking for a single rule. Soggy bedding with uneaten food calls for less input and drier material. Dry, crumbly bedding may need cautious moisture. A bin that is processing food steadily without odor may not need correction at all.";
+
+}
+
+/*
+This is formative.
+Submission and review complete the branch,
+even when the first response is not fully correct.
+*/
+
+state.kc3Complete=true;
+
+let selects=
+document.querySelectorAll(
+"#s1,#s2,#s3"
+);
+
+selects.forEach(function(select){
+select.disabled=true;
+});
+
+let submit=
+feedback.parentElement.querySelector(
+".primary-btn"
+);
+
+if(submit){
+
+submit.disabled=true;
+submit.textContent=
+"Responses Submitted";
+
+}
+
+refreshNavigation();
+
+}
+
+/* =========================================================
+   SUMMATIVE SEQUENCING
+   ========================================================= */
+
+function sequenceItem(id,text){
+
+return `
+<div class="sequence-item">
+
+<select
+id="${id}"
+aria-label="Sequence position for ${text}">
+
+<option value="">#</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+
+</select>
+
+<span>${text}</span>
+
+</div>
+`;
+
+}
+
+function checkSequence(){
+
+let worms=
+document.getElementById("seqWorms").value;
+
+let observe=
+document.getElementById("seqObserve").value;
+
+let container=
+document.getElementById("seqContainer").value;
+
+let food=
+document.getElementById("seqFood").value;
+
+let bedding=
+document.getElementById("seqBedding").value;
+
+let values=[
+worms,
+observe,
+container,
+food,
+bedding
+];
+
+let feedback=
+document.getElementById(
+"sequenceFeedback"
+);
+
+if(values.some(function(value){
+return value==="";
+})){
+
+feedback.className=
+"feedback show try";
+
+feedback.textContent=
+"Assign a position to every action before submitting.";
+
+return;
+
+}
+
+let unique=
+new Set(values);
+
+if(unique.size!==5){
+
+feedback.className=
+"feedback show try";
+
+feedback.textContent=
+"Use each position from 1 through 5 exactly once.";
+
+return;
+
+}
+
+/*
+Correct conceptual sequence:
+
+1 Container / airflow
+2 Bedding / moisture
+3 Worms
+4 Modest feeding
+5 Observe
+*/
+
+let correct=
+container==="1" &&
+bedding==="2" &&
+worms==="3" &&
+food==="4" &&
+observe==="5";
+
+state.sequenceSubmitted=true;
+
+state.assessment.a3=correct;
+
+feedback.className=
+"feedback show "+
+(correct ? "good" : "try");
+
+if(correct){
+
+feedback.textContent=
+"Good. You established the physical environment before introducing the worms, began feeding modestly, and left observation as the final step before making additional changes.";
+
+}else{
+
+feedback.textContent=
+"Think about what each later action depends on. Establish the container and bedding environment first. Then introduce the worms, begin modest feeding, and observe the system before making further adjustments.";
+
+}
+
+let selects=
+document.querySelectorAll(
+"#seqWorms,#seqObserve,#seqContainer,#seqFood,#seqBedding"
+);
+
+selects.forEach(function(select){
+select.disabled=true;
+});
+
+let submit=
+feedback.parentElement.querySelector(
+".primary-btn"
+);
+
+if(submit){
+
+submit.disabled=true;
+submit.textContent=
+"Sequence Submitted";
+
+}
+
+refreshNavigation();
+
+}
+
+/* =========================================================
+   PROGRESSION
+   ========================================================= */
+
+function slideUnlocked(index){
+
+/* Shared preparation + first branch decision */
+
+if(index<=8){
+return true;
+}
+
+/* B1 consequence + KC require B1 decision */
+
+if(index===9 || index===10){
+return state.b1Choice!=="";
+}
+
+/* B2 decision requires B1 KC */
+
+if(index===11){
+return state.kc1Complete;
+}
+
+/* B2 consequence + KC require B2 decision */
+
+if(index===12 || index===13){
+
+return (
+state.kc1Complete &&
+state.b2Choice!==""
+);
+
+}
+
+/* B3 decision requires B2 KC */
+
+if(index===14){
+return state.kc2Complete;
+}
+
+/* B3 consequence + KC require B3 decision */
+
+if(index===15 || index===16){
+
+return (
+state.kc2Complete &&
+state.b3Choice!==""
+);
+
+}
+
+/* Debrief onward requires all branches */
+
+if(index>=17){
+return state.kc3Complete;
+}
+
+return true;
+
+}
+
+function currentScreenComplete(){
+
+let index=state.current;
+
+/* Decisions */
+
+if(index===8){
+return state.b1Choice!=="";
+}
+
+if(index===11){
+return state.b2Choice!=="";
+}
+
+if(index===14){
+return state.b3Choice!=="";
+}
+
+/* Formative knowledge checks */
+
+if(index===10){
+return state.kc1Complete;
+}
+
+if(index===13){
+return state.kc2Complete;
+}
+
+if(index===16){
+return state.kc3Complete;
+}
+
+/* Summative MCQ */
+
+if(index===19){
+return !!state.quizSubmitted.a1;
+}
+
+if(index===20){
+return !!state.quizSubmitted.a2;
+}
+
+/* Sequencing */
+
+if(index===21){
+return state.sequenceSubmitted;
+}
+
+/* Final summative MCQ */
+
+if(index===22){
+return !!state.quizSubmitted.a4;
+}
+
+return true;
+
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+function updateMenu(){
+
+let menu=
+document.getElementById("menu");
+
+let html=
+'<div class="menu-heading">Module Menu</div>';
+
+let lastSection="";
+
+slides.forEach(function(slide,index){
+
+if(slide.section!==lastSection){
+
+html+=
+'<div class="menu-section">'+
+slide.section+
+'</div>';
+
+lastSection=
+slide.section;
+
+}
+
+let locked=
+!slideUnlocked(index);
+
+let active=
+index===state.current;
+
+let completed=
+state.visited.has(index) &&
+index!==state.current;
+
+html+=`
+<button
+class="menu-item
+${active ? "active" : ""}
+${completed ? "completed" : ""}"
+
+${locked ? "disabled" : ""}
+
+onclick="goTo(${index})"
+
+aria-current="${active ? "page" : "false"}">
+
+<span>${slide.id}</span>
+
+<span>${slide.title}</span>
+
+<span class="menu-status">
+${locked ? "🔒" : completed ? "✓" : active ? "•" : ""}
+</span>
+
+</button>
+`;
+
+});
+
+menu.innerHTML=html;
+
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function goTo(index){
+
+if(
+index<0 ||
+index>=slides.length
+){
+return;
+}
+
+if(!slideUnlocked(index)){
+return;
+}
+
+state.current=index;
+
+state.visited.add(index);
+
+render();
+
+}
+
+function next(){
+
+if(!currentScreenComplete()){
+return;
+}
+
+let nextIndex=
+state.current+1;
+
+if(nextIndex>=slides.length){
+return;
+}
+
+if(!slideUnlocked(nextIndex)){
+return;
+}
+
+goTo(nextIndex);
+
+}
+
+function back(){
+
+if(state.current>0){
+goTo(state.current-1);
+}
+
+}
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+function updateProgress(){
+
+let completed=0;
+
+slides.forEach(function(slide,index){
+
+if(
+state.visited.has(index) &&
+index<state.current
+){
+
+completed++;
+
+}
+
+});
+
+let percent=
+Math.round(
+(completed/slides.length)*100
+);
+
+document
+.getElementById("progressFill")
+.style.width=
+percent+"%";
+
+document
+.getElementById("progressText")
+.textContent=
+percent+"%";
+
+}
+
+/* =========================================================
+   PLAYER CONTROL STATE
+   ========================================================= */
+
+function refreshNavigation(){
+
+updateMenu();
+updateProgress();
+
+let backButton=
+document.getElementById(
+"backBtn"
+);
+
+let continueButton=
+document.getElementById(
+"continueBtn"
+);
+
+backButton.disabled=
+state.current===0;
+
+if(
+state.current===
+slides.length-1
+){
+
+continueButton.disabled=true;
+
+continueButton.textContent=
+"Complete";
+
+return;
+
+}
+
+let ready=
+currentScreenComplete();
+
+let nextAvailable=
+slideUnlocked(
+state.current+1
+);
+
+continueButton.disabled=
+!(ready && nextAvailable);
+
+continueButton.textContent=
+continueButton.disabled
+?
+"Complete screen to continue"
+:
+"Continue →";
+
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function render(){
+
+let slide=
+slides[state.current];
+
+let stage=
+document.getElementById("stage");
+
+stage.innerHTML=
+'<article class="'+
+slideClass(slide.type)+
+'">'+
+getSlideHTML(slide)+
+'</article>';
+
+stage.scrollTop=0;
+
+document
+.getElementById("screenCount")
+.textContent=
+"Screen "+
+(state.current+1)+
+" of "+
+slides.length;
+
+refreshNavigation();
+
+let heading=
+stage.querySelector("h1");
+
+if(heading){
+
+heading.setAttribute(
+"tabindex",
+"-1"
+);
+
+try{
+
+heading.focus({
+preventScroll:true
+});
+
+}catch(error){
+
+heading.focus();
+
+}
+
+}
+
+}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+document
+.getElementById("backBtn")
+.addEventListener(
+"click",
+back
+);
+
+document
+.getElementById("continueBtn")
+.addEventListener(
+"click",
+next
+);
+
+document.addEventListener(
+"keydown",
+function(event){
+
+if(
+event.altKey &&
+event.key==="ArrowLeft"
+){
+
+event.preventDefault();
+back();
+
+}
+
+if(
+event.altKey &&
+event.key==="ArrowRight"
+){
+
+event.preventDefault();
+next();
+
+}
+
+}
+);
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+render();
+
+</script>
+
+</body>
+</html>
